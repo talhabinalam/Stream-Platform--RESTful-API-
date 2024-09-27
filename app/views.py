@@ -21,8 +21,8 @@ logger = logging.getLogger(__name__)
 #     print(data)
 #
 #     return JsonResponse(data)
-#
-#
+
+
 # def movie_details(request, id):
 #     movie = Movie.objects.get(id=id)
 #     data = {
@@ -44,8 +44,8 @@ logger = logging.getLogger(__name__)
 #     movie_list = Movie.objects.all()
 #     serializer = MovieSerializers(movie_list, many=True)
 #     return Response(serializer.data)
-#
-#
+
+
 # @api_view(['GET', 'PUT', 'DELETE'])
 # def movie_details(request, id):
 #     try:
