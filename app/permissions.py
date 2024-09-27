@@ -16,3 +16,4 @@ class ReviewUserOrReadOnly(permissions.BasePermission):
             return True
         else:
             return obj.review_user == request.user
+            # review of the current user for a specific show == user who requesting for any changes 

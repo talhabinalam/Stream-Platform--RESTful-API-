@@ -1,19 +1,15 @@
 import logging
-from functools import total_ordering
-from random import RECIP_BPF
-
-from django.template.context_processors import request
-from rest_framework.response import Response
 from .serializers import *
-from rest_framework.decorators import api_view
+from .permissions import *
+
+# from rest_framework import mixins
+# from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.exceptions import ValidationError
-from rest_framework import mixins
 from rest_framework import generics
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
-
-from .permissions import *
 
 logger = logging.getLogger(__name__)
 
@@ -188,7 +184,7 @@ class ReviewCreate(generics.CreateAPIView):
         if not current_user.is_authenticated:
             raise ValidationError("Please login first")
         pk = self.kwargs['pk']
-        watchlist = WatchList.objects.get(pk=pk) # Query specific movie and store in watchlist
+        watchlist = WatchList.objects.get(pk=pk) # Query specific movie and store it in watchlist
         review_queryset = Review.objects.filter(watchlist=watchlist, review_user=current_user)
         if review_queryset.exists():
             raise ValidationError("Review already exists")
@@ -200,7 +196,6 @@ class ReviewCreate(generics.CreateAPIView):
         watchlist.total_review = watchlist.total_review + 1
 
         watchlist.save()
-
         serializer.save(watchlist=watchlist, review_user=current_user)
 
 
