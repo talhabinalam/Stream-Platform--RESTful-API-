@@ -71,7 +71,7 @@ class StreamPlatformSerializers(serializers.ModelSerializer):
     watchlist = serializers.HyperlinkedRelatedField(
         many=True,
         read_only=True,
-        view_name='watchlist_details'
+        view_name='watchlist-details'
     )
 
     class Meta:

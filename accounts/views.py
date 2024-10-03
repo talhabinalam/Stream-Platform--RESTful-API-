@@ -1,3 +1,5 @@
+from rest_framework.permissions import IsAuthenticated
+
 from .serializers import *
 from rest_framework.response import Response
 from rest_framework import status
@@ -29,6 +31,10 @@ class RegisterView(APIView):
 
 
 class LogotView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
-        request.user.auth_token.delete()
-        return Response(status=status.HTTP_200_OK)
+        if request.user.is_authenticated:
+            request.user.auth_token.delete()
+            return Response({"message": "User logged out successfully!"}, status=status.HTTP_200_OK)
+        return Response({"message": "User must login first!"}, status=status.HTTP_400_BAD_REQUEST)
