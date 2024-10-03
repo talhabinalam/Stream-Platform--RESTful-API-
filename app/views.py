@@ -71,6 +71,8 @@ logger = logging.getLogger(__name__)
 
 
 class WatchListView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
     def get(self, request):
         movies = WatchList.objects.all()
         serializer = WatchListSerializers(movies, many=True)
@@ -85,6 +87,8 @@ class WatchListView(APIView):
 
 
 class WatchListDetailsView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
     def get(self, request, pk):
         movies = WatchList.objects.get(pk=pk)
         serializer = WatchListSerializers(movies)
@@ -105,6 +109,8 @@ class WatchListDetailsView(APIView):
 
 
 class StreamPlatformView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
     def get(self, request):
         platform = StreamPlatform.objects.all()
         serializer = StreamPlatformSerializers(platform, many=True, context={'request': request})
@@ -120,6 +126,8 @@ class StreamPlatformView(APIView):
 
 
 class StreamDetailsView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
     def get(self, request, pk):
         platform = StreamPlatform.objects.get(pk=pk)
         serializer = StreamPlatformSerializers(platform)
@@ -178,6 +186,7 @@ class ReviewList(generics.ListAPIView):
 class ReviewCreate(generics.CreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializers
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         current_user = self.request.user
@@ -200,6 +209,6 @@ class ReviewCreate(generics.CreateAPIView):
 
 
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [ReviewUserOrReadOnly]
+    permission_classes = [IsReviewUserOrReadOnly]
     queryset = Review.objects.all()
     serializer_class = ReviewSerializers
