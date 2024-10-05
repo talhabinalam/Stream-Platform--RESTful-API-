@@ -1,4 +1,6 @@
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .serializers import *
 from rest_framework.response import Response
@@ -6,8 +8,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.tokens import RefreshToken
-
-# from . import models
+from . import models
 
 class RegisterView(APIView):
 
@@ -22,14 +23,17 @@ class RegisterView(APIView):
             data['response'] = "Registration Successful"
             data['username'] = account.username
             data['email'] = account.email
-            # token = Token.objects.get(user=account).key
-            # data['token'] = token
 
-            refresh = RefreshToken.for_user(account)
-            data['refresh'] = {
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-            }
+            # TokenAuthentication
+            token = Token.objects.get(user=account).key
+            data['token'] = token
+
+            # JWTAuthentication
+            # refresh = RefreshToken.for_user(account)
+            # data['refresh'] = {
+            #     'refresh': str(refresh),
+            #     'access': str(refresh.access_token),
+            # }
 
         else:
             data = serializer.errors

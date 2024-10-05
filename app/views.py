@@ -1,6 +1,4 @@
 import logging
-from .serializers import *
-from .permissions import *
 
 # from rest_framework import mixins
 # from rest_framework.decorators import api_view
@@ -10,7 +8,11 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle, ScopedRateThrottle
+
+from .serializers import *
+from .permissions import *
+from .throttling import *
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +75,8 @@ logger = logging.getLogger(__name__)
 
 class WatchListView(APIView):
     # permission_classes = [IsAdminOrReadOnly]
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
 
     def get(self, request):
         movies = WatchList.objects.all()
@@ -144,7 +147,6 @@ class StreamDetailsView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-
 # class ReviewList(mixins.ListModelMixin,
 #                   mixins.CreateModelMixin,
 #                   generics.GenericAPIView):
@@ -179,6 +181,9 @@ class ReviewList(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     # queryset = Review.objects.all()
     serializer_class = ReviewSerializers
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'review-list'
+
 
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -189,6 +194,7 @@ class ReviewCreate(generics.CreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializers
     permission_classes = [IsAuthenticated]
+    throttle_classes = [ReviewCreateThrottle]
 
     def perform_create(self, serializer):
         current_user = self.request.user
@@ -214,3 +220,4 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsReviewUserOrReadOnly]
     queryset = Review.objects.all()
     serializer_class = ReviewSerializers
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
