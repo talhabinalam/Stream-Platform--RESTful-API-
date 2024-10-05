@@ -72,7 +72,8 @@ logger = logging.getLogger(__name__)
 
 
 class WatchListView(APIView):
-    permission_classes = [IsAdminOrReadOnly]
+    # permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         movies = WatchList.objects.all()
