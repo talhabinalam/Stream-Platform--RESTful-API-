@@ -15,6 +15,7 @@ from rest_framework import filters
 from .serializers import *
 from .permissions import *
 from .throttling import *
+from .pagination import *
 
 logger = logging.getLogger(__name__)
 
@@ -80,10 +81,14 @@ logger = logging.getLogger(__name__)
 class WatchListGV(generics.ListAPIView):
     queryset = WatchList.objects.all()
     serializer_class = WatchListSerializers
+
+    # filter
     # filter_backends = [filters.SearchFilter]
     # search_fields = ['=title', 'platform__name']  # "=" for exact matching of search query
-    filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['avg_rating']
+    # filter_backends = [filters.OrderingFilter]
+    # ordering_fields = ['avg_rating']
+
+    pagination_class = WatchListPGPagination
 
 
 class WatchListView(APIView):

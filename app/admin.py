@@ -3,7 +3,7 @@ from .models import *
 
 
 class WatchListAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'active', 'created_at')
+    list_display = ('title', 'description', 'active', 'created')
     ordering = ['id']
 
 

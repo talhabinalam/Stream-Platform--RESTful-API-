@@ -19,7 +19,7 @@ class WatchList(models.Model):
     avg_rating = models.FloatField(default=0)
     total_review = models.IntegerField(default=0)
     active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title

@@ -148,7 +148,14 @@ REST_FRAMEWORK = {
         'user': '5/day',
         'review-create': '1/day',
         'review-list': '5/day',
-    }
+    },
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 5,
+
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+
 }
 
 
