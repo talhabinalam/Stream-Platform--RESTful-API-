@@ -38,7 +38,7 @@ class RegisterView(APIView):
         else:
             data = serializer.errors
 
-        return Response(data)
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
 
