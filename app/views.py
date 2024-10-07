@@ -9,12 +9,16 @@ from rest_framework import generics
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle, ScopedRateThrottle
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
 from .serializers import *
 from .permissions import *
 from .throttling import *
 
 logger = logging.getLogger(__name__)
+
+
 
 # def movies(request):
 #     movie_list = Movie.objects.all()
@@ -55,8 +59,8 @@ logger = logging.getLogger(__name__)
 #         movie = Movie.objects.get(id=id)
 #     except Exception:
 #         return Response({'error': 'Movie not found!'}, status=status.HTTP_404_NOT_FOUND)
-#
-#
+
+
 #     if request.method == 'GET':
 #         serializer = MovieSerializers(movie)
 #         return Response(serializer.data)
@@ -71,6 +75,15 @@ logger = logging.getLogger(__name__)
 #         movie.delete()
 #         return Response({'message': 'Movie has been deleted'}, status=200)
 
+
+
+class WatchListGV(generics.ListAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = WatchListSerializers
+    # filter_backends = [filters.SearchFilter]
+    # search_fields = ['=title', 'platform__name']  # "=" for exact matching of search query
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['avg_rating']
 
 
 class WatchListView(APIView):
@@ -158,8 +171,8 @@ class StreamDetailsView(APIView):
 #
 #     def post(self, request, *args, **kwargs):
 #         return self.create(request, *args, **kwargs)
-#
-#
+
+
 # class ReviewDetail(mixins.RetrieveModelMixin,
 #                     mixins.UpdateModelMixin,
 #                     mixins.DestroyModelMixin,
@@ -178,11 +191,13 @@ class StreamDetailsView(APIView):
 
 
 class ReviewList(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     # queryset = Review.objects.all()
     serializer_class = ReviewSerializers
-    throttle_classes = [ScopedRateThrottle]
-    throttle_scope = 'review-list'
+    # throttle_classes = [ScopedRateThrottle]
+    # throttle_scope = 'review-list'
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['review_user__username', 'active']
 
 
     def get_queryset(self):
@@ -221,3 +236,12 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializers
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
+
+
+class ReviewUser(generics.ListAPIView):
+    serializer_class = ReviewSerializers
+
+    def get_queryset(self):
+        # username = self.kwargs['username']
+        username = self.request.query_params.get('username')
+        return Review.objects.filter(review_user__username=username)
