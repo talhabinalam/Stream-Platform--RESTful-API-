@@ -37,3 +37,4 @@ class LogoutTestCase(APITestCase):
         response = self.client.post(reverse('logout'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+

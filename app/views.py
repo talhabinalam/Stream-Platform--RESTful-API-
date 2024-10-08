@@ -91,6 +91,7 @@ class WatchListGV(generics.ListAPIView):
     pagination_class = WatchListPGPagination
 
 
+
 class WatchListView(APIView):
     # permission_classes = [IsAdminOrReadOnly]
     # permission_classes = [IsAuthenticated]
@@ -107,6 +108,7 @@ class WatchListView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class WatchListDetailsView(APIView):
@@ -165,6 +167,7 @@ class StreamDetailsView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
+
 # class ReviewList(mixins.ListModelMixin,
 #                   mixins.CreateModelMixin,
 #                   generics.GenericAPIView):
@@ -195,6 +198,7 @@ class StreamDetailsView(APIView):
 #         return self.destroy(request, *args, **kwargs)
 
 
+
 class ReviewList(generics.ListAPIView):
     # permission_classes = [IsAuthenticated]
     # queryset = Review.objects.all()
@@ -208,6 +212,7 @@ class ReviewList(generics.ListAPIView):
     def get_queryset(self):
         pk = self.kwargs['pk']
         return Review.objects.filter(watchlist=pk)
+
 
 
 class ReviewCreate(generics.CreateAPIView):
@@ -236,11 +241,13 @@ class ReviewCreate(generics.CreateAPIView):
         serializer.save(watchlist=watchlist, review_user=current_user)
 
 
+
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsReviewUserOrReadOnly]
     queryset = Review.objects.all()
     serializer_class = ReviewSerializers
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
+
 
 
 class ReviewUser(generics.ListAPIView):

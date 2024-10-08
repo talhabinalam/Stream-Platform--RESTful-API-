@@ -20,5 +20,3 @@ urlpatterns = [
     path('reviews/', ReviewUser.as_view(), name='review-user'),
 ]
 
-
-
