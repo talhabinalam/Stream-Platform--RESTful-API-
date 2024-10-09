@@ -93,7 +93,7 @@ class WatchListGV(generics.ListAPIView):
 
 
 class WatchListView(APIView):
-    # permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
     # permission_classes = [IsAuthenticated]
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
 

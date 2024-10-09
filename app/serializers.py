@@ -41,7 +41,7 @@ class WatchListSerializers(serializers.ModelSerializer):
 
     # reviews = ReviewSerializers(many=True, read_only=True)
 
-    platform = serializers.CharField(source='platform.name')
+    # platform = serializers.CharField(source='platform.name')
 
     len_title = serializers.SerializerMethodField()
 
@@ -53,6 +53,8 @@ class WatchListSerializers(serializers.ModelSerializer):
     @staticmethod
     def get_len_title(obj):
         return len(obj.title)
+
+
 
 
     # def validate_name(self, value):
