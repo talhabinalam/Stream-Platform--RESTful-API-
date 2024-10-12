@@ -1,3 +1,5 @@
+from select import select
+
 from .models import *
 
 from django.urls import reverse
@@ -48,7 +50,7 @@ class WatchlistTestCase(APITestCase):
 
     def test_create_watchlist(self):
         data = {
-            "title": "Spider man",
+            "title": "Spider Man",
             "description": "Movie",
             "platform": self.stream.id,
             "active": True
@@ -63,4 +65,72 @@ class WatchlistTestCase(APITestCase):
 
     def test_watchlist_detail(self):
         response = self.client.get(reverse('watchlist-details', args=(self.watchlist.id,)))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(WatchList.objects.count(), 1)
+        self.assertEqual(WatchList.objects.get().title, 'Spider Man')
+
+
+class ReviewTestCase(APITestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='example', password='password@123')
+        self.token = Token.objects.get(user__username=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        self.stream = StreamPlatform.objects.create(name="Netflix", about="Streaming Platform",
+                                                    website="https://www.netflix.com")
+        self.watchlist = WatchList.objects.create(platform=self.stream, title="Spider Man",
+                                                  description="Movie", active=True)
+        self.watchlist2 = WatchList.objects.create(platform=self.stream, title="Spider Man",
+                                                  description="Movie", active=True)
+
+        self.review = Review.objects.create(review_user=self.user, rating=5, description="Review",
+                                            watchlist=self.watchlist2, active=True)
+
+    def test_review_create(self):
+        data = {
+            "review_user": self.user,
+            "rating": 5,
+            "description": "Good movie!",
+            "watchlist": self.watchlist.id,
+            "active": True
+        }
+
+        response = self.client.post(reverse('review-create', args=[self.watchlist.id]), data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Review.objects.count(), 2)
+        # self.assertEqual(Review.objects.get().rating, 5)
+
+        response = self.client.post(reverse('review-create', args=[self.watchlist.id]), data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_review_create_unath(self):
+        data = {
+            "review_user": self.user,
+            "rating": 5,
+            "description": "Good movie!",
+            "watchlist": self.watchlist.id,
+            "active": True
+        }
+
+        self.client.force_authenticate(user=None) # Logging out authenticated user!
+        response = self.client.post(reverse('review-create', args=[self.watchlist.id]), data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_review_update(self):
+        data = {
+            "review_user": self.user,
+            "rating": 4,
+            "description": "Good movie! - Updated",
+            "watchlist": self.watchlist.id,
+            "active": True
+        }
+        response = self.client.put(reverse('review-detail', args=[self.review.id]), data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_reviewlist(self):
+        response = self.client.get(reverse('review-list', args=[self.watchlist.id]))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_review_detail(self):
+        response = self.client.get(reverse('review-detail', args=[self.review.id]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)

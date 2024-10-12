@@ -144,9 +144,9 @@ REST_FRAMEWORK = {
     #     'rest_framework.throttling.UserRateThrottle'
     # ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '3/day',
+        'anon': '5/day',
         'user': '5/day',
-        'review-create': '1/day',
+        'review-create': '5/day',
         'review-list': '5/day',
     },
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
